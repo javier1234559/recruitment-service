@@ -1,10 +1,13 @@
 package vn.unigap.api.dto.out;
 
-public class EmployerDTOwithDescription {
+import lombok.Data;
+
+@Data
+public class EmployerDTOWithDescription {
     private long id;
     private String email;
     private String name;
-    private int provinceId;
+    private Integer provinceId;
     private String provinceName;
     private String description;
 

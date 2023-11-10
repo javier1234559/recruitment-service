@@ -1,8 +1,6 @@
 package vn.unigap.api.dto.in;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 //https://reflectoring.io/bean-validation-with-spring-boot/
@@ -14,15 +12,15 @@ public class EmployerDTO {
 
     @Email
     @NotEmpty
-    @Max(value = 255, message = "Email length should not be greater than 255")
+    @Size(max = 255, message = "Email length should not be greater than 255")
     private String email;
 
     @NotEmpty
-    @Max(value = 255, message = "Name length should not be greater than 255")
+    @Size(max = 255, message = "Name length should not be greater than 255")
     private String name;
 
-    @NotEmpty
-    private String provinceId;
+    @NotNull
+    private Integer provinceId;
 
     private String description;
 
