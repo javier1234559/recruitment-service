@@ -5,7 +5,7 @@ public class EmployerDTO {
     private long id;
     private String email;
     private String name;
-    private String provinceId;
+    private int provinceId;
     private String provinceName;
 
 }
