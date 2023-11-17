@@ -113,7 +113,7 @@ public class EmployerServiceImpl implements EmployerService{
             employerRepository.deleteById(id);
             return "Employer with ID: " + id + " deleted successfully.";
         } else {
-            return "Employer with ID: " + id + " not found.";
+            throw new ExistingResourceException("Employer with ID: " + id + " not found.");
         }
     }
 

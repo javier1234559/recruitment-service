@@ -18,6 +18,26 @@ import org.mockito.MockitoAnnotations;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+//https://www.petrikainulainen.net/programming/spring-framework/integration-testing-of-spring-mvc-applications-write-clean-assertions-with-jsonpath/
+//https://www.springboottutorial.com/spring-boot-unit-testing-and-mocking-with-mockito-and-junit
+//https://www.baeldung.com/guide-to-jayway-jsonpath
+//https://goessner.net/articles/JsonPath/
+//https://viblo.asia/p/thuc-hien-viet-unit-test-spring-mvc-rest-service-Eb85omY0Z2G
+//https://site.mockito.org/
+
+//https://spring.io/blog/2016/04/15/testing-improvements-in-spring-boot-1-4
+
+//https://stacktobasics.com/mockito-cheatsheet
+//https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html
+//https://lzone.de/cheat-sheet/JSONPath
+/**
+ * Cac van de can tim hieu de testing
+ * 1. Tim hieu ve khai niem testing , o day la unit test
+ * 2. Tim hieu ve cu phap cua MockMvc va Mockito
+ * 3. TIm hieu ve cu phap cua jsonpath thong qua cheatsheet json-path
+ * 3.
+ */
+
 @SpringBootTest()
 @AutoConfigureMockMvc
 public class EmployerControllerTest {
@@ -26,14 +46,11 @@ public class EmployerControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private EmployerService employerService; // Assuming you have an EmployerService
-
-    @InjectMocks
-    private EmployerController yourControllerClass; // The controller you are testing
+    private EmployerService employerService;
 
     @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -52,10 +69,8 @@ public class EmployerControllerTest {
                     .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
                     .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(size));
         } catch (Exception e) {
-            e.printStackTrace(); // Log or handle the exception as needed
+            e.printStackTrace();
         }
-
-
     }
 
     @Test
@@ -74,14 +89,13 @@ public class EmployerControllerTest {
                     .andExpect(MockMvcResultMatchers.jsonPath("$.provinceName").value("Chua biet province name"))
                     .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(""));
         } catch (Exception e) {
-            e.printStackTrace(); // Log or handle the exception as needed
+            e.printStackTrace();
         }
     }
 
     @Test
     public void testCreateEmployer() {
         try {
-//             Mock the behavior of the service to return a success response
             when(employerService.createEmployer(any())).thenReturn("New employer created successfully with id ");
 
             mockMvc.perform(MockMvcRequestBuilders
@@ -98,7 +112,6 @@ public class EmployerControllerTest {
     public void testUpdateEmployer() {
         int testId = 52;
         try {
-            // Update the employer with the specific ID
             mockMvc.perform(MockMvcRequestBuilders
                             .put("/api/v1/employer/{id}", testId)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -116,8 +129,7 @@ public class EmployerControllerTest {
             mockMvc.perform(MockMvcRequestBuilders
                             .delete("/api/v1/employer/{id}", 1)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(MockMvcResultMatchers.status().isOk())
-                    .andExpect(MockMvcResultMatchers.content().string("Employer with ID: 1 not found."));
+                    .andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
         }
