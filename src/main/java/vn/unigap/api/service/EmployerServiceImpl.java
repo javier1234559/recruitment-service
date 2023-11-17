@@ -1,16 +1,12 @@
 package vn.unigap.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import vn.unigap.api.dto.in.EmployerDTO;
-import vn.unigap.api.dto.out.EmployerDTOResponse;
-import vn.unigap.api.dto.out.EmployerDTOWithDescription;
+import vn.unigap.api.dto.in.EmployerDto;
+import vn.unigap.api.dto.in.UpdateEmployerDto;
+import vn.unigap.api.dto.out.EmployerDtoOut;
 import vn.unigap.api.entity.Employer;
 import vn.unigap.api.exception.ExistingResourceException;
-import vn.unigap.api.exception.NotFoundResourceException;
 import vn.unigap.api.repository.EmployerRepository;
 
 import java.util.*;
@@ -21,20 +17,27 @@ public class EmployerServiceImpl implements EmployerService{
     @Autowired
     private EmployerRepository employerRepository ;
 
-    @Override
-    public boolean checkExistEmail(String email) {
+    private boolean checkExistEmail(String email) {
         String checkEmail = employerRepository.getExistEmail(email);
          return checkEmail != null && !checkEmail.isEmpty() ;
     }
 
-    @Override
-    public boolean checkExistProvinceId(Integer provinceId) {
+    private boolean checkExistProvinceId(Integer provinceId) {
         Integer checkProvince = employerRepository.getExistProvinceId(provinceId);
         return checkProvince != 0 ;
     }
 
     @Override
-    public String createEmployer(EmployerDTO employer) {
+    public String createEmployer(EmployerDto employer) {
+        String email = employer.getEmail();
+        int proviceId = employer.getProvinceId();
+        if(checkExistEmail(email)){
+            throw new ExistingResourceException("Email is already exist");
+        }
+        if(checkExistProvinceId(proviceId)){
+            throw new ExistingResourceException("Province id for this employer is already exist");
+        }
+
         Employer newEmployer = new Employer();
         newEmployer.setName(employer.getName());
         newEmployer.setEmail(employer.getEmail());
@@ -53,26 +56,28 @@ public class EmployerServiceImpl implements EmployerService{
     }
 
     @Override
-    public String updateEmployer(Long id, String name, Integer province, String description) {
+    public String updateEmployer(Long id , UpdateEmployerDto updateEmployerDto) {
         Optional<Employer> existingEmployerOptional = employerRepository.findById(id);
 
         if (existingEmployerOptional.isPresent()) {
             Employer existingEmployer = existingEmployerOptional.get();
 
-            if (name != null) {
-                existingEmployer.setName(name);
+            if (updateEmployerDto.getName() != null) {
+                existingEmployer.setName(updateEmployerDto.getName());
             }
 
-            if (!(null == province)) {
-                if(checkExistProvinceId(province)){
+            Integer provinceid = updateEmployerDto.getProvinceId();
+            if (!(null == provinceid)) {
+                // this will ensure not update the same province id with another employer
+                if(!(Objects.equals(existingEmployer.getProvince(), provinceid)) && checkExistProvinceId(provinceid)){
                  throw new ExistingResourceException("Already existing this province id !!");
                 }
 
-                existingEmployer.setProvince(province);
+                existingEmployer.setProvince(updateEmployerDto.getProvinceId());
             }
 
-            if (description != null) {
-                existingEmployer.setDescription(description);
+            if (updateEmployerDto.getDescription() != null) {
+                existingEmployer.setDescription(updateEmployerDto.getDescription());
             }
 
             employerRepository.save(existingEmployer);
@@ -83,11 +88,11 @@ public class EmployerServiceImpl implements EmployerService{
     }
 
     @Override
-    public EmployerDTOWithDescription getEmployer(Long id) {
+    public EmployerDtoOut getEmployer(Long id) {
         Optional<Employer> employer = employerRepository.findById(id);
 
         if (employer.isPresent()) {
-            EmployerDTOWithDescription result = new EmployerDTOWithDescription();
+            EmployerDtoOut result = new EmployerDtoOut();
             Employer emp = employer.get();
             result.setId(emp.getId());
             result.setEmail(emp.getEmail());
@@ -112,25 +117,26 @@ public class EmployerServiceImpl implements EmployerService{
         }
     }
 
-    public List<EmployerDTOResponse> getListEmployer(int page, int pageSize) {
+    @Override
+    public List<Map<String, Object>> getListEmployer(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        List<Employer> list =  employerRepository.getListEmployerByPagination(offset, pageSize);
-        List<EmployerDTOResponse> listDTO = new ArrayList<>();
+        List<Employer> list = employerRepository.getListEmployerByPagination(offset, pageSize);
+        List<Map<String, Object>> resultList = new ArrayList<>();
+
         for (Employer employer : list) {
-            listDTO.add(mapToDTOResponse(employer));
+            resultList.add(mapToDTOResponse(employer));
         }
-        return listDTO;
+        return resultList;
     }
 
-    private EmployerDTOResponse mapToDTOResponse(Employer employer) {
-        // Map fields from Employer to EmployerDTOResponse
-        EmployerDTOResponse response = new EmployerDTOResponse();
-        response.setId(employer.getId());
-        response.setEmail(employer.getEmail());
-        response.setName(employer.getName());
-        response.setProvinceId(employer.getProvince());
-        response.setProvinceName("employer.getProvinceName()");
-        // Set other properties as needed
+    private Map<String, Object> mapToDTOResponse(Employer employer) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("id", employer.getId());
+        response.put("email", employer.getEmail());
+        response.put("name", employer.getName());
+        response.put("provinceId", employer.getProvince());
+        response.put("provinceName", "DefaultProvinceName");
+        // Put other properties as needed
         return response;
     }
 }

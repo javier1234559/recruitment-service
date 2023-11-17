@@ -1,19 +1,17 @@
 package vn.unigap.api.service;
 
-import vn.unigap.api.dto.in.EmployerDTO;
-import vn.unigap.api.dto.out.EmployerDTOResponse;
-import vn.unigap.api.dto.out.EmployerDTOWithDescription;
-import vn.unigap.api.entity.Employer;
+import vn.unigap.api.dto.in.EmployerDto;
+import vn.unigap.api.dto.in.UpdateEmployerDto;
+import vn.unigap.api.dto.out.EmployerDtoOut;
+
 import java.util.List;
+import java.util.Map;
 
 public interface EmployerService {
-
-    boolean checkExistEmail(String email);
-    boolean checkExistProvinceId(Integer provinceId);
-    String createEmployer(EmployerDTO employer);
-    String updateEmployer(Long id , String name , Integer province , String description);
-    EmployerDTOWithDescription getEmployer(Long id);
+    String createEmployer(EmployerDto employer);
+    String updateEmployer(Long id, UpdateEmployerDto updateEmployerDto);
+    EmployerDtoOut getEmployer(Long id);
     String deleteEmployer(Long id);
-    List<EmployerDTOResponse> getListEmployer(int page , int pageSize);
+    List<Map<String, Object>> getListEmployer(int page , int pageSize);
 
 }
