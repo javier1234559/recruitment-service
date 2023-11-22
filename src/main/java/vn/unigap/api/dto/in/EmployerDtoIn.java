@@ -8,7 +8,7 @@ import lombok.Data;
 //https://viblo.asia/p/dung-validation-bang-tay-trong-spring-boot-phan-1-3P0lPGyoZox
 
 @Data
-public class EmployerDto {
+public class EmployerDtoIn {
 
     @Email
     @NotEmpty

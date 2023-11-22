@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
-public class UpdateEmployerDto {
+public class UpdateEmployerDtoIn {
 
     @NotEmpty
     @Size(max = 255, message = "Name length should not be greater than 255")
