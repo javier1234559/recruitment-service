@@ -1,6 +1,11 @@
 spring:
   application:
-    name: sample-project
+    name: sample-projectserver
+  server:
+    error:
+      include-message: always
+      include-binding-errors: always
+
 ---
 spring:
   datasource:

@@ -31,7 +31,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public String createEmployer(EmployerDtoIn employerDtoTn) {
+    public void createEmployer(EmployerDtoIn employerDtoTn) {
         String email = employerDtoTn.getEmail();
         Optional<Employer> checkEmail = employerRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
@@ -50,11 +50,10 @@ public class EmployerServiceImpl implements EmployerService {
         // Saving the new employer
         Employer savedEmployer = employerRepository.save(newEmployer);
 
-        return "New employer created with ID: " + savedEmployer.getId();
     }
 
     @Override
-    public String updateEmployer(Long id, UpdateEmployerDtoIn updateEmployerDtoIn) {
+    public void updateEmployer(Long id, UpdateEmployerDtoIn updateEmployerDtoIn) {
         Employer updateEmployer = employerRepository.findById(id)
                 .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id" + id + " is not found!")
                 );
@@ -63,7 +62,6 @@ public class EmployerServiceImpl implements EmployerService {
         updateEmployer.setProvince(updateEmployerDtoIn.getProvinceId());
         updateEmployer.setDescription(updateEmployerDtoIn.getDescription());
         employerRepository.save(updateEmployer);
-        return "Employer with ID: " + id + " updated successfully.";
     }
 
     @Override
@@ -75,22 +73,23 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public String deleteEmployer(Long id) {
+    public void deleteEmployer(Long id) {
+        System.out.println("Deleting employer with ID: " + id);
         Employer employer = employerRepository.findById(id)
                 .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id" + id + " is not found!")
                 );
-        employerRepository.deleteById(id);
-        return "Employer with ID: " + id + " deleted successfully.";
+        employerRepository.deleteById(employer.getId());
     }
 
     @Override
     public PageDtoOut<EmployerDtoOut> getListEmployer(PageDtoIn pageDtoIn) {
+        System.out.println("tesstssdfd");
         Page<Employer> employers = this.employerRepository.findAll(
-                PageRequest.of(pageDtoIn.getPage() - 1, pageDtoIn.getPageSize(),
+                PageRequest.of(pageDtoIn.getPage() - 1, pageDtoIn.getSize(),
                         Sort.by("name").ascending()));
 
         return PageDtoOut.from(pageDtoIn.getPage(),
-                pageDtoIn.getPageSize(),
+                pageDtoIn.getSize(),
                 employers.getTotalElements(),
                 employers.stream().map(EmployerServiceImpl::findProvinceName).toList());
     }

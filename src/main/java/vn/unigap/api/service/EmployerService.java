@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface EmployerService {
-    String createEmployer(EmployerDtoIn employer);
-    String updateEmployer(Long id, UpdateEmployerDtoIn updateEmployerDtoIn);
+    void createEmployer(EmployerDtoIn employer);
+    void updateEmployer(Long id, UpdateEmployerDtoIn updateEmployerDtoIn);
     EmployerDtoOut getEmployer(Long id);
-    String deleteEmployer(Long id);
+    void deleteEmployer(Long id);
     PageDtoOut<EmployerDtoOut> getListEmployer(PageDtoIn pageDtoIn);
 
 }

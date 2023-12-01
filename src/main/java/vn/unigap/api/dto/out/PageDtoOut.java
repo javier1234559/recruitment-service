@@ -41,9 +41,14 @@ import java.util.List;
             Long totalPages = totalElements / pageSize;
             if (totalElements % pageSize != 0) {
                 totalPages++;
-
             }
-            return PageDtoOut.<T>builder().page(page).pageSize(pageSize).totalElements(totalElements).totalPages(totalPages).data(data).build();
+
+            return PageDtoOut.<T>builder()
+                    .page(page)
+                    .pageSize(pageSize)
+                    .totalElements(totalElements)
+                    .totalPages(totalPages)
+                    .data(data).build();
         }
 
     }
