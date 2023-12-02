@@ -14,7 +14,7 @@ import vn.unigap.api.dto.out.PageDtoOut;
 import vn.unigap.api.entity.Employer;
 import vn.unigap.api.repository.EmployerRepository;
 import vn.unigap.common.EnumStatusCode;
-import vn.unigap.common.exception.ApiException;
+import vn.unigap.common.exception.CustomException;
 
 import java.util.Date;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class EmployerServiceImpl implements EmployerService {
         String email = employerDtoTn.getEmail();
         Optional<Employer> checkEmail = employerRepository.findByEmail(email);
         if (checkEmail.isPresent()) {
-            throw new ApiException(EnumStatusCode.NOT_ACCEPTABLE, HttpStatus.CONFLICT, "Email is already exist !");
+            throw new CustomException(EnumStatusCode.NOT_ACCEPTABLE, HttpStatus.CONFLICT, "Email is already exist !");
         }
 
         Date currentDate = new Date();
@@ -48,14 +48,13 @@ public class EmployerServiceImpl implements EmployerService {
                 .createdAt(currentDate).build();
 
         // Saving the new employer
-        Employer savedEmployer = employerRepository.save(newEmployer);
-
+        employerRepository.save(newEmployer);
     }
 
     @Override
     public void updateEmployer(Long id, UpdateEmployerDtoIn updateEmployerDtoIn) {
         Employer updateEmployer = employerRepository.findById(id)
-                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id" + id + " is not found!")
+                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
                 );
 
         updateEmployer.setName(updateEmployerDtoIn.getName());
@@ -67,23 +66,21 @@ public class EmployerServiceImpl implements EmployerService {
     @Override
     public EmployerDtoOut getEmployer(Long id) {
         Employer employer = employerRepository.findById(id)
-                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id" + id + " is not found!")
+                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
                 );
         return findProvinceName(employer);
     }
 
     @Override
     public void deleteEmployer(Long id) {
-        System.out.println("Deleting employer with ID: " + id);
         Employer employer = employerRepository.findById(id)
-                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id" + id + " is not found!")
+                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
                 );
         employerRepository.deleteById(employer.getId());
     }
 
     @Override
     public PageDtoOut<EmployerDtoOut> getListEmployer(PageDtoIn pageDtoIn) {
-        System.out.println("tesstssdfd");
         Page<Employer> employers = this.employerRepository.findAll(
                 PageRequest.of(pageDtoIn.getPage() - 1, pageDtoIn.getSize(),
                         Sort.by("name").ascending()));

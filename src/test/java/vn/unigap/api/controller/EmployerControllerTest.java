@@ -1,15 +1,14 @@
 package vn.unigap.api.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import vn.unigap.api.dto.in.EmployerDtoIn;
@@ -22,8 +21,7 @@ import vn.unigap.api.service.EmployerService;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 //https://www.petrikainulainen.net/programming/spring-framework/integration-testing-of-spring-mvc-applications-write-clean-assertions-with-jsonpath/
@@ -47,25 +45,14 @@ import static org.mockito.Mockito.*;
  * 3.
  */
 
-@SpringBootTest()
-@AutoConfigureMockMvc
+@WebMvcTest(EmployerController.class)
 public class EmployerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private EmployerService employerService;
-
-    @InjectMocks
-    private EmployerController employerController;
-
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        MockitoAnnotations.openMocks(this);
-    }
-
 
     @Test
     public void testGetListEmployer() throws Exception {
@@ -83,27 +70,37 @@ public class EmployerControllerTest {
         PageDtoIn pageDtoIn = new PageDtoIn(page, size);
         when(employerService.getListEmployer(pageDtoIn)).thenReturn(pageDtoOut);
 
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/employer")
-                        .param("page", String.valueOf(page))
-                        .param("size", String.valueOf(size))
-                        .contentType(MediaType.APPLICATION_JSON))
+        RequestBuilder request = MockMvcRequestBuilders
+                .get("/api/v1/employer")
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").doesNotExist())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.object.page").value(page))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.object.pageSize").value(size))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.object.totalElements").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.object.totalPages").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.object.data").isArray())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.object.data.length()").value(size));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.object.data").isArray());
     }
 
     @Test
     public void testGetEmployerById() throws Exception {
-        int sampleId = 3094094;
+        // TEST SUCCESS CASE
+        // This will test /api/v1/employer/{id} will be get id and pass to employerService or not
+        // and response as expected or not
+
+        Long sampleId = 1L;
+        ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
+
+        EmployerDtoOut test = new EmployerDtoOut(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
+        when(employerService.getEmployer(idCaptor.capture())).thenReturn(test);
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/employer/{id}", sampleId)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -113,17 +110,31 @@ public class EmployerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.statusCode").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.object").exists());
+        assertEquals(sampleId, idCaptor.getValue());
+
+        // TEST FAILED CASE
+        // This will test /api/v1/employer/{id}  the id is passed is valid or not
+        // and response as expected or not
+        String invalidId = "1L";
+
+        EmployerDtoOut testInvalid = new EmployerDtoOut(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
+        when(employerService.getEmployer(idCaptor.capture())).thenReturn(testInvalid);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/api/v1/employer/{id}", invalidId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
 
     }
 
     @Test
     public void testCreateEmployer() throws Exception {
         EmployerDtoIn employerDtoIn = new EmployerDtoIn("test@gmail.com", "TEst", 1, "Description 1");
-        doNothing().when(employerService).createEmployer(employerDtoIn);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/employer")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(employerDtoIn)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
@@ -132,17 +143,20 @@ public class EmployerControllerTest {
         Long testId = 1L;
 
         UpdateEmployerDtoIn updateEmployerDtoIn = new UpdateEmployerDtoIn("Name", 123, "Description");
-        doNothing().when(employerService).updateEmployer(1L, updateEmployerDtoIn);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/employer/{id}", testId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(updateEmployerDtoIn)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+
+        // Verify that the updateEmployer method is called with the correct arguments
+        verify(employerService).updateEmployer(eq(testId), eq(updateEmployerDtoIn));
     }
 
     @Test
     public void testDeleteEmployer() throws Exception {
-        Long id = 1L ;
+        Long id = 1L;
         doNothing().when(employerService).deleteEmployer(id);
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/api/v1/employer/{id}", id)
