@@ -18,6 +18,8 @@ public interface EmployerRepository extends JpaRepository<Employer, Long> {
 
     Page<Employer> findAll(Pageable page);
 
+//    @Query("SELECT p FROM Province p WHERE p.id = :provinceId")
+//    Optional<Province> findProvinceById(@Param("provinceId") Long provinceId);
 //    @Query("SELECT em.email as result FROM Employer as em WHERE em.email =:email")
 //    String getExistEmail(@Param("email") String email);
 
