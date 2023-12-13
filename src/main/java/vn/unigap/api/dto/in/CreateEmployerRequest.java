@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class EmployerDtoIn {
+public class CreateEmployerRequest {
 
     @Email
     @NotEmpty

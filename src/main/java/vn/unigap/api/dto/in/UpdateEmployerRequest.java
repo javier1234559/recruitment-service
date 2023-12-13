@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UpdateEmployerDtoIn {
+public class UpdateEmployerRequest {
 
     @NotEmpty
     @Size(max = 255, message = "Name length should not be greater than 255")

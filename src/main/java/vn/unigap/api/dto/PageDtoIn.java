@@ -1,4 +1,4 @@
-package vn.unigap.api.dto.in;
+package vn.unigap.api.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

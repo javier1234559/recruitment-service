@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "job_field")
 public class JobField {
     @Id
     @Column(name = "id")
@@ -13,4 +14,7 @@ public class JobField {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "slug")
+    private String slug;
 }

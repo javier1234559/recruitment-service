@@ -3,19 +3,18 @@ package vn.unigap.api.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Data
+@Table(name = "jobs")
 public class Job {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long employer_id ;
+    private Long employer_id;
 
     @Column(name = "title")
     private String title;
@@ -29,13 +28,14 @@ public class Job {
     @Column(name = "salary")
     private Integer salary;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<JobField> fields = new ArrayList<>();
+    @Column(name = "fields")
+    private String fields;
 
-    private List<JobProvince> provinces = new ArrayList<>();
+    @Column(name = "provinces")
+    private String provinces;
 
     @Column(name = "updated_at")
-    private Date updatedAt= new Date();
+    private Date updatedAt = new Date();
 
     @Column(name = "created_at")
     private Date createdAt = new Date();

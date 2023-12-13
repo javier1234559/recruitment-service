@@ -12,7 +12,7 @@ import vn.unigap.api.entity.Employer;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmployerDtoOut {
+public class EmployerResponse {
     private long id;
     private String email;
     private String name;
@@ -20,8 +20,8 @@ public class EmployerDtoOut {
     private String provinceName;
     private String description;
 
-    public static EmployerDtoOut from(Employer e, String provinceName) {
-        return EmployerDtoOut.builder()
+    public static EmployerResponse from(Employer e, String provinceName) {
+        return EmployerResponse.builder()
                 .id(e.getId())
                 .email(e.getEmail())
                 .name(e.getName())

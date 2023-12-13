@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.unigap.api.dto.in.EmployerDtoIn;
-import vn.unigap.api.dto.in.PageDtoIn;
-import vn.unigap.api.dto.in.UpdateEmployerDtoIn;
-import vn.unigap.api.dto.out.EmployerDtoOut;
-import vn.unigap.api.dto.out.PageDtoOut;
-import vn.unigap.api.service.EmployerService;
+import vn.unigap.api.dto.PageDtoIn;
+import vn.unigap.api.dto.PageDtoOut;
+import vn.unigap.api.dto.in.CreateEmployerRequest;
+import vn.unigap.api.dto.in.UpdateEmployerRequest;
+import vn.unigap.api.dto.out.EmployerResponse;
+import vn.unigap.api.service.employer.EmployerService;
 import vn.unigap.common.CustomResponse;
 import vn.unigap.common.EnumStatusCode;
 
@@ -24,36 +24,38 @@ public class EmployerController {
     public EmployerController(EmployerService employerService) {
         this.employerService = employerService;
     }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<CustomResponse<String>> createEmployer(@Valid @RequestBody EmployerDtoIn employerD) {
+    public ResponseEntity<CustomResponse<String>> createEmployer(@Valid @RequestBody CreateEmployerRequest createEmployerRequest) {
+        employerService.create(createEmployerRequest);
         String successMsg = "Employer created successfully !!";
         return ResponseEntity.status(HttpStatus.CREATED).body(CustomResponse.noDataResponse(0, HttpStatus.CREATED, successMsg));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<CustomResponse<String>> updateEmployer(@PathVariable Long id, @RequestBody @Valid UpdateEmployerDtoIn updateEmployerDtoIn) {
+    public ResponseEntity<CustomResponse<String>> updateEmployer(@PathVariable Long id, @RequestBody @Valid UpdateEmployerRequest updateEmployerRequest) {
         String successMsg = "Employer updated successfully !!";
-        employerService.updateEmployer(id, updateEmployerDtoIn);
+        employerService.update(id, updateEmployerRequest);
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.noDataResponse(0, HttpStatus.OK, successMsg));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<CustomResponse<EmployerDtoOut>> getEmployerById(@PathVariable Long id) {
+    public ResponseEntity<CustomResponse<EmployerResponse>> getEmployerById(@PathVariable Long id) {
         String successMsg = "";
-        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(employerService.getEmployer(id), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
+        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(employerService.getOne(id), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<CustomResponse<String>> deleteEmployer(@PathVariable Long id) {
         String successMsg = "Employer deleted successfully !!";
-        employerService.deleteEmployer(id);
+        employerService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.noDataResponse(0, HttpStatus.OK, successMsg));
     }
 
     //?page=1&size=2
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<CustomResponse<PageDtoOut<EmployerDtoOut>>> getListEmployer(@Valid PageDtoIn pageDtoIn) {
+    public ResponseEntity<CustomResponse<PageDtoOut<EmployerResponse>>> getListEmployer(@Valid PageDtoIn pageDtoIn) {
         String successMsg = "";
-        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(employerService.getListEmployer(pageDtoIn), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
+        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(employerService.getAll(pageDtoIn), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
     }
 }

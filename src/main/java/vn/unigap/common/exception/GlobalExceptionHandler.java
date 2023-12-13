@@ -17,12 +17,13 @@ public class GlobalExceptionHandler {
 
     // THE CODE TO HANDLE SPRING VALIDATION
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<CustomResponse<Map<String, String>>> handleBindException(BindException e) {
+    public ResponseEntity<?> handleBindException(BindException e) {
         Map<String, String> fieldsError = new HashMap<>();
+        fieldsError.put("message", "Error when validation");
         for (FieldError fieldError : e.getFieldErrors()) {
             fieldsError.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(CustomResponse.<Map<String, String>>withDataResponse(fieldsError, EnumStatusCode.BAD_REQUEST, HttpStatus.BAD_REQUEST, "Error when validation"));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(fieldsError);
     }
 
     //THE CODE HANDLE CustomException

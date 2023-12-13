@@ -11,12 +11,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import vn.unigap.api.dto.in.EmployerDtoIn;
-import vn.unigap.api.dto.in.PageDtoIn;
-import vn.unigap.api.dto.in.UpdateEmployerDtoIn;
-import vn.unigap.api.dto.out.EmployerDtoOut;
-import vn.unigap.api.dto.out.PageDtoOut;
-import vn.unigap.api.service.EmployerService;
+import vn.unigap.api.dto.in.CreateEmployerRequest;
+import vn.unigap.api.dto.PageDtoIn;
+import vn.unigap.api.dto.in.UpdateEmployerRequest;
+import vn.unigap.api.dto.out.EmployerResponse;
+import vn.unigap.api.dto.PageDtoOut;
+import vn.unigap.api.service.employer.EmployerService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 
 @WebMvcTest(EmployerController.class)
-public class EmployerControllerTest {
+public class CreateEmployerRequestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,16 +59,16 @@ public class EmployerControllerTest {
         int page = 2;
         int size = 2;
 
-        List<EmployerDtoOut> mockList = Arrays.asList(
-                new EmployerDtoOut(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1"),
-                new EmployerDtoOut(2L, "example2@gmail.com", "Example", 2, "Province 2", "Description 2"),
-                new EmployerDtoOut(3L, "example3@gmail.com", "Example3", 3, "Province 3", "Description 3"),
-                new EmployerDtoOut(4L, "example@4gmail.com", "Example4", 4, "Province 4", "Description 4")
+        List<EmployerResponse> mockList = Arrays.asList(
+                new EmployerResponse(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1"),
+                new EmployerResponse(2L, "example2@gmail.com", "Example", 2, "Province 2", "Description 2"),
+                new EmployerResponse(3L, "example3@gmail.com", "Example3", 3, "Province 3", "Description 3"),
+                new EmployerResponse(4L, "example@4gmail.com", "Example4", 4, "Province 4", "Description 4")
         );
 
-        PageDtoOut<EmployerDtoOut> pageDtoOut = PageDtoOut.from(page, size, (long) mockList.size(), mockList);
+        PageDtoOut<EmployerResponse> pageDtoOut = PageDtoOut.from(page, size, (long) mockList.size(), mockList);
         PageDtoIn pageDtoIn = new PageDtoIn(page, size);
-        when(employerService.getListEmployer(pageDtoIn)).thenReturn(pageDtoOut);
+        when(employerService.getAll(pageDtoIn)).thenReturn(pageDtoOut);
 
         RequestBuilder request = MockMvcRequestBuilders
                 .get("/api/v1/employer")
@@ -98,8 +98,8 @@ public class EmployerControllerTest {
         Long sampleId = 1L;
         ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
 
-        EmployerDtoOut test = new EmployerDtoOut(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
-        when(employerService.getEmployer(idCaptor.capture())).thenReturn(test);
+        EmployerResponse test = new EmployerResponse(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
+        when(employerService.getOne(idCaptor.capture())).thenReturn(test);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/employer/{id}", sampleId)
@@ -117,8 +117,8 @@ public class EmployerControllerTest {
         // and response as expected or not
         String invalidId = "1L";
 
-        EmployerDtoOut testInvalid = new EmployerDtoOut(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
-        when(employerService.getEmployer(idCaptor.capture())).thenReturn(testInvalid);
+        EmployerResponse testInvalid = new EmployerResponse(1L, "test@gmail.com", "TEst", 1, "Province 1", "Description 1");
+        when(employerService.getOne(idCaptor.capture())).thenReturn(testInvalid);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/api/v1/employer/{id}", invalidId))
@@ -129,7 +129,7 @@ public class EmployerControllerTest {
 
     @Test
     public void testCreateEmployer() throws Exception {
-        EmployerDtoIn employerDtoIn = new EmployerDtoIn("test@gmail.com", "TEst", 1, "Description 1");
+        CreateEmployerRequest employerDtoIn = new CreateEmployerRequest("test@gmail.com", "TEst", 1, "Description 1");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/employer")
@@ -142,27 +142,27 @@ public class EmployerControllerTest {
     public void testUpdateEmployer() throws Exception {
         Long testId = 1L;
 
-        UpdateEmployerDtoIn updateEmployerDtoIn = new UpdateEmployerDtoIn("Name", 123, "Description");
+        UpdateEmployerRequest updateEmployerRequest = new UpdateEmployerRequest("Name", 123, "Description");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/employer/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(updateEmployerDtoIn)))
+                        .content(new ObjectMapper().writeValueAsString(updateEmployerRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         // Verify that the updateEmployer method is called with the correct arguments
-        verify(employerService).updateEmployer(eq(testId), eq(updateEmployerDtoIn));
+        verify(employerService).update(eq(testId), eq(updateEmployerRequest));
     }
 
     @Test
     public void testDeleteEmployer() throws Exception {
         Long id = 1L;
-        doNothing().when(employerService).deleteEmployer(id);
+        doNothing().when(employerService).delete(id);
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/api/v1/employer/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        verify(employerService, times(1)).deleteEmployer(id);
+        verify(employerService, times(1)).delete(id);
     }
 }

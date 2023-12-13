@@ -11,6 +11,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "job_province")
 public class JobProvince {
     @Id
     @Column(name = "id")
@@ -19,4 +20,7 @@ public class JobProvince {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "slug")
+    private String slug;
 }
