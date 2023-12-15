@@ -15,7 +15,7 @@ import vn.unigap.common.CustomResponse;
 import vn.unigap.common.EnumStatusCode;
 
 @RestController
-@RequestMapping("/api/v1/employer")
+@RequestMapping("/api/v1/employers")
 public class EmployerController {
 
     private final EmployerService employerService;
@@ -26,14 +26,14 @@ public class EmployerController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<CustomResponse<String>> createEmployer(@Valid @RequestBody CreateEmployerRequest createEmployerRequest) {
+    public ResponseEntity<CustomResponse<String>> create(@Valid @RequestBody CreateEmployerRequest createEmployerRequest) {
         employerService.create(createEmployerRequest);
         String successMsg = "Employer created successfully !!";
         return ResponseEntity.status(HttpStatus.CREATED).body(CustomResponse.noDataResponse(0, HttpStatus.CREATED, successMsg));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<CustomResponse<String>> updateEmployer(@PathVariable Long id, @RequestBody @Valid UpdateEmployerRequest updateEmployerRequest) {
+    public ResponseEntity<CustomResponse<String>> update(@PathVariable Long id, @RequestBody @Valid UpdateEmployerRequest updateEmployerRequest) {
         String successMsg = "Employer updated successfully !!";
         employerService.update(id, updateEmployerRequest);
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.noDataResponse(0, HttpStatus.OK, successMsg));
@@ -46,7 +46,7 @@ public class EmployerController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<CustomResponse<String>> deleteEmployer(@PathVariable Long id) {
+    public ResponseEntity<CustomResponse<String>> delete(@PathVariable Long id) {
         String successMsg = "Employer deleted successfully !!";
         employerService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.noDataResponse(0, HttpStatus.OK, successMsg));
@@ -54,7 +54,7 @@ public class EmployerController {
 
     //?page=1&size=2
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<CustomResponse<PageDtoOut<EmployerResponse>>> getListEmployer(@Valid PageDtoIn pageDtoIn) {
+    public ResponseEntity<CustomResponse<PageDtoOut<EmployerResponse>>> getList(@Valid PageDtoIn pageDtoIn) {
         String successMsg = "";
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(employerService.getAll(pageDtoIn), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
     }

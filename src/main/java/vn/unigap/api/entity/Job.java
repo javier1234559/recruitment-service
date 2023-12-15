@@ -1,12 +1,18 @@
 package vn.unigap.api.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
-@Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 @Table(name = "jobs")
 public class Job {
     @Id
@@ -14,6 +20,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "employer_id")
     private Long employer_id;
 
     @Column(name = "title")
