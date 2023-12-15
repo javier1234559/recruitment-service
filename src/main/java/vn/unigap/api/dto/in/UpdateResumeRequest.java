@@ -10,18 +10,18 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class UpdateJobRequest {
+public class UpdateResumeRequest {
     @NotNull(message = "id is can not null")
     private Long id;
 
-    @NotNull(message = "title is can not empty")
+    @NotNull(message = "careerObj is can not null")
+    private String careerObj;
+
+    @NotNull(message = "title is can not null")
     private String title;
 
-    @NotNull(message = "quantity is can not null")
-    private Integer quantity;
-
-    @NotNull(message = "description is can not empty")
-    private String description;
+    @NotNull(message = "salary is can not null")
+    private Integer salary;
 
     @NotEmpty(message = "fieldIds is can not empty")
     private List<Integer> fieldIds;
@@ -29,9 +29,4 @@ public class UpdateJobRequest {
     @NotEmpty(message = "provinceIds is can not empty")
     private List<Integer> provinceIds;
 
-    @NotNull(message = "salary is can not null")
-    private Integer salary;
-
-    @NotNull(message = "expiredAt is can not null")
-    private Date expiredAt;
 }

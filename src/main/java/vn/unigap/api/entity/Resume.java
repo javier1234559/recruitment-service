@@ -10,11 +10,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Data
+@Table(name = "resume")
 public class Resume {
     @Id
     @Column(name = "id")
@@ -32,21 +33,11 @@ public class Resume {
     @Column(name = "salary")
     private Integer salary;
 
-    @ManyToMany
-    @JoinTable(
-            name = "job_province_join",
-            joinColumns = @JoinColumn(name = "job_id"),
-            inverseJoinColumns = @JoinColumn(name = "province_id")
-    )
-    private Set<JobProvince> provinces = new HashSet<>();
+    @Column(name = "fields")
+    private String fields;
 
-    @ManyToMany
-    @JoinTable(
-            name = "job_fields_join",
-            joinColumns = @JoinColumn(name = "job_id"),
-            inverseJoinColumns = @JoinColumn(name = "fields_id")
-    )
-    private Set<JobField> fields = new HashSet<>();
+    @Column(name = "provinces")
+    private String provinces;
 
     @Column(name = "updated_at")
     private Date updatedAt = new Date();

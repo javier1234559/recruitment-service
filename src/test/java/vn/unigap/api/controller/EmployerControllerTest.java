@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  */
 
 @WebMvcTest(EmployerController.class)
-public class CreateEmployerRequestControllerTest {
+public class EmployerControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -71,7 +71,7 @@ public class CreateEmployerRequestControllerTest {
         when(employerService.getAll(pageDtoIn)).thenReturn(pageDtoOut);
 
         RequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/employer")
+                .get("/api/v1/employers")
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))
                 .contentType(MediaType.APPLICATION_JSON);
@@ -92,7 +92,7 @@ public class CreateEmployerRequestControllerTest {
     @Test
     public void testGetEmployerById() throws Exception {
         // TEST SUCCESS CASE
-        // This will test /api/v1/employer/{id} will be get id and pass to employerService or not
+        // This will test /api/v1/employers/{id} will be get id and pass to employerService or not
         // and response as expected or not
 
         Long sampleId = 1L;
@@ -102,7 +102,7 @@ public class CreateEmployerRequestControllerTest {
         when(employerService.getOne(idCaptor.capture())).thenReturn(test);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/employer/{id}", sampleId)
+                        .get("/api/v1/employers/{id}", sampleId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -113,7 +113,7 @@ public class CreateEmployerRequestControllerTest {
         assertEquals(sampleId, idCaptor.getValue());
 
         // TEST FAILED CASE
-        // This will test /api/v1/employer/{id}  the id is passed is valid or not
+        // This will test /api/v1/employers/{id}  the id is passed is valid or not
         // and response as expected or not
         String invalidId = "1L";
 
@@ -121,7 +121,7 @@ public class CreateEmployerRequestControllerTest {
         when(employerService.getOne(idCaptor.capture())).thenReturn(testInvalid);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/employer/{id}", invalidId))
+                        .get("/api/v1/employers/{id}", invalidId))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
 
@@ -132,7 +132,7 @@ public class CreateEmployerRequestControllerTest {
         CreateEmployerRequest employerDtoIn = new CreateEmployerRequest("test@gmail.com", "TEst", 1, "Description 1");
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/employer")
+                        .post("/api/v1/employers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(employerDtoIn)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -145,7 +145,7 @@ public class CreateEmployerRequestControllerTest {
         UpdateEmployerRequest updateEmployerRequest = new UpdateEmployerRequest("Name", 123, "Description");
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/employer/{id}", testId)
+                        .put("/api/v1/employers/{id}", testId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updateEmployerRequest)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -159,7 +159,7 @@ public class CreateEmployerRequestControllerTest {
         Long id = 1L;
         doNothing().when(employerService).delete(id);
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/api/v1/employer/{id}", id)
+                        .delete("/api/v1/employers/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
