@@ -26,6 +26,7 @@ import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.CustomException;
 import vn.unigap.common.helper.StringParser;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -76,7 +77,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void create(CreateResumeRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         Seeker seeker = seekerRepository.findById(request.getSeekerId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + request.getSeekerId() + " is not found!")
         );
 
@@ -100,7 +101,7 @@ public class ResumeServiceImpl implements ResumeService {
 
     @Override
     public void update(Long id, UpdateResumeRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         Resume updateResume = resumeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
                 );

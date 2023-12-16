@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Data
@@ -42,11 +44,11 @@ public class Job {
     private String provinces;
 
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDate updatedAt;
 
     @Column(name = "created_at")
-    private Date createdAt = new Date();
+    private LocalDate createdAt;
 
     @Column(name = "expired_at")
-    private Date expiredAt;
+    private LocalDate expiredAt;
 }

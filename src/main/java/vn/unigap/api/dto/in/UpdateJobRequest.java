@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -33,5 +34,5 @@ public class UpdateJobRequest {
     private Integer salary;
 
     @NotNull(message = "expiredAt is can not null")
-    private Date expiredAt;
+    private LocalDate expiredAt;
 }

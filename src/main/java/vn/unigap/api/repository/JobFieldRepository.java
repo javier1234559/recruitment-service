@@ -7,4 +7,5 @@ import vn.unigap.api.entity.JobField;
 
 @Repository
 public interface JobFieldRepository extends JpaRepository<JobField, Integer> {
+
 }

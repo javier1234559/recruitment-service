@@ -12,6 +12,7 @@ import vn.unigap.api.dto.in.CreateJobRequest;
 import vn.unigap.api.dto.in.UpdateJobRequest;
 import vn.unigap.api.dto.out.JobListResponse;
 import vn.unigap.api.dto.out.JobOneResponse;
+import vn.unigap.api.dto.out.JobRecommendResponse;
 import vn.unigap.api.service.job.JobService;
 import vn.unigap.common.CustomResponse;
 import vn.unigap.common.EnumStatusCode;
@@ -45,6 +46,12 @@ public class JobController {
     public ResponseEntity<CustomResponse<JobOneResponse>> getOne(@PathVariable Long id) {
         String successMsg = "";
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(jobService.getOne(id), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
+    }
+
+    @RequestMapping(value = "recommend/{id}", method = RequestMethod.GET)
+    public ResponseEntity<CustomResponse<JobRecommendResponse>> getRecommendOne(@PathVariable Long id) {
+        String successMsg = "";
+        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(jobService.getRecommendOne(id), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

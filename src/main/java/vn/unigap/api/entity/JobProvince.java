@@ -14,7 +14,6 @@ import lombok.Data;
 @Table(name = "job_province")
 public class JobProvince {
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

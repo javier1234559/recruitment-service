@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -33,8 +34,8 @@ public class Seeker {
     private Integer province;
 
     @Column(name = "created_at")
-    private Date createdAt = new Date();
+    private LocalDate createdAt;
 
     @Column(name = "updated_at")
-    private Date updatedAt= new Date();
+    private LocalDate updatedAt;
 }
