@@ -1,6 +1,9 @@
 package vn.unigap.api.service.resume;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -76,6 +79,11 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "resumesList", allEntries = true)
+            }
+    )
     public void create(CreateResumeRequest request) {
         LocalDate currentDate = LocalDate.now();
         Seeker seeker = seekerRepository.findById(request.getSeekerId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + request.getSeekerId() + " is not found!")
@@ -100,6 +108,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "resume", key = "#id"),
+                    @CacheEvict(value = "resumesList", allEntries = true)
+            }
+    )
     public void update(Long id, UpdateResumeRequest request) {
         LocalDate currentDate = LocalDate.now();
         Resume updateResume = resumeRepository.findById(id)
@@ -122,6 +136,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Cacheable(value = "resume", key = "#id")
     public ResumeOneResponse getOne(Long id) {
         Resume resume = resumeRepository.findById(id).orElseThrow(
                 () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
@@ -140,6 +155,12 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "resume", key = "#id"),
+                    @CacheEvict(value = "resumesList", allEntries = true)
+            }
+    )
     public void delete(Long id) {
         Resume resume = resumeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
@@ -148,6 +169,7 @@ public class ResumeServiceImpl implements ResumeService {
     }
 
     @Override
+    @Cacheable(value = "resumesList", key = "#pageDtoIn.page + '-' + #pageDtoIn.size") //key will like this "2-3"
     public PageDtoOut<ResumeListResponse> getALl(PageDtoIn pageDtoIn) {
         Page<Resume> resumes = resumeRepository.findAll(
                 PageRequest.of(pageDtoIn.getPage() - 1,

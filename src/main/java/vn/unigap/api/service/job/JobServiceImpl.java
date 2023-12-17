@@ -2,6 +2,9 @@ package vn.unigap.api.service.job;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -80,6 +83,11 @@ public class JobServiceImpl implements JobService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "jobsList", allEntries = true)
+            }
+    )
     public void create(CreateJobRequest request) {
         LocalDate currentDate = LocalDate.now();
 
@@ -103,6 +111,12 @@ public class JobServiceImpl implements JobService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "job", key = "#id"),
+                    @CacheEvict(value = "jobsList", allEntries = true)
+            }
+    )
     public void update(Long id, UpdateJobRequest request) {
         LocalDate currentDate = LocalDate.now();
         Job updateJob = jobRepository.findById(id)
@@ -126,6 +140,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "job", key = "#id")
     public JobOneResponse getOne(Long id) {
         Job job;
         job = jobRepository.findById(id).orElseThrow(
@@ -140,6 +155,12 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "job", key = "#id"),
+                    @CacheEvict(value = "jobsList", allEntries = true)
+            }
+    )
     public void delete(Long id) {
         Job job = jobRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
@@ -148,6 +169,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "jobsList", key = "#pageDtoIn.page + '-' + #pageDtoIn.size") //key will like this "2-3"
     public PageDtoOut<JobListResponse> getALl(PageDtoIn pageDtoIn) {
         Page<Job> jobs = jobRepository.findAll(
                 PageRequest.of(pageDtoIn.getPage() - 1,
@@ -169,6 +191,7 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
+    @Cacheable(value = "jobRecommend", key = "#id")
     public JobRecommendResponse getRecommendOne(Long id) {
         Job job = jobRepository.findById(id).orElseThrow(
                 () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")

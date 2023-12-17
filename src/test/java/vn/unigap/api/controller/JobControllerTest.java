@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import vn.unigap.api.dto.in.CreateJobRequest;
 import vn.unigap.api.dto.in.UpdateJobRequest;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -59,7 +60,7 @@ public class JobControllerTest {
                 Arrays.asList(1, 2, 3),
                 Arrays.asList(101, 102, 103),
                 50000,
-                new Date()
+                LocalDate.now()
         );
 
         // TEST SUCCESS CASE
@@ -104,7 +105,7 @@ public class JobControllerTest {
                 Arrays.asList(1, 2, 3),
                 Arrays.asList(101, 102, 103),
                 50000,
-                new Date()
+                LocalDate.now()
         );
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/api/v1/jobs/{id}", testId)
