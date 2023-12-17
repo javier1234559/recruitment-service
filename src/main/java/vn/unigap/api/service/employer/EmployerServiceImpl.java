@@ -19,6 +19,7 @@ import vn.unigap.api.repository.JobProvinceRepository;
 import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.CustomException;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class EmployerServiceImpl implements EmployerService {
             throw new CustomException(EnumStatusCode.NOT_ACCEPTABLE, HttpStatus.CONFLICT, "Email is already exist !");
         }
 
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         Employer newEmployer = Employer.builder()
                 .name(employerDtoTn.getName())
                 .email(employerDtoTn.getEmail())

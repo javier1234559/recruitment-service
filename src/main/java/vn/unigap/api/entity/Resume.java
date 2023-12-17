@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,9 +41,9 @@ public class Resume {
     private String provinces;
 
     @Column(name = "updated_at")
-    private Date updatedAt = new Date();
+    private LocalDate updatedAt;
 
     @Column(name = "created_at")
-    private Date createdAt = new Date();
+    private LocalDate createdAt;
 
 }

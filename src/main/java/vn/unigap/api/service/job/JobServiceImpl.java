@@ -7,26 +7,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import vn.unigap.api.dto.JobFieldDto;
-import vn.unigap.api.dto.JobProvinceDto;
-import vn.unigap.api.dto.PageDtoIn;
-import vn.unigap.api.dto.PageDtoOut;
+import vn.unigap.api.dto.*;
 import vn.unigap.api.dto.in.CreateJobRequest;
 import vn.unigap.api.dto.in.UpdateJobRequest;
 import vn.unigap.api.dto.out.JobListResponse;
 import vn.unigap.api.dto.out.JobOneResponse;
-import vn.unigap.api.entity.Employer;
-import vn.unigap.api.entity.Job;
-import vn.unigap.api.entity.JobField;
-import vn.unigap.api.entity.JobProvince;
-import vn.unigap.api.repository.EmployerRepository;
-import vn.unigap.api.repository.JobFieldRepository;
-import vn.unigap.api.repository.JobProvinceRepository;
-import vn.unigap.api.repository.JobRepository;
+import vn.unigap.api.dto.out.JobRecommendResponse;
+import vn.unigap.api.entity.*;
+import vn.unigap.api.repository.*;
 import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.CustomException;
 import vn.unigap.common.helper.StringParser;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +37,9 @@ public class JobServiceImpl implements JobService {
 
     @Autowired
     private JobProvinceRepository jobProvinceRepository;
+
+    @Autowired
+    private ResumeRepository resumeRepository;
 
     @Autowired
     private JobFieldRepository jobFieldRepository;
@@ -75,10 +72,16 @@ public class JobServiceImpl implements JobService {
                 .collect(Collectors.toList());
     }
 
+    private String getEmployerName(Long employerId) {
+        return employerRepository.findById(employerId)
+                .map(Employer::getName)
+                .orElse("");
+    }
+
     @Override
     @Transactional
     public void create(CreateJobRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
 
         String fieldIds = StringParser.ListIdToString(request.getFieldIds());
         String provinceIds = StringParser.ListIdToString(request.getFieldIds());
@@ -101,7 +104,7 @@ public class JobServiceImpl implements JobService {
     @Override
     @Transactional
     public void update(Long id, UpdateJobRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         Job updateJob = jobRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
                 );
@@ -124,21 +127,16 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public JobOneResponse getOne(Long id) {
-        Job job = jobRepository.findById(id).orElseThrow(
+        Job job;
+        job = jobRepository.findById(id).orElseThrow(
                 () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
         );
 
         List<JobFieldDto> fieldIds = mapperJobFieldDto(job);
         List<JobProvinceDto> provinceIds = mapperJobProvinceDto(job);
 
-        String employerName = "";
-        Optional<Employer> employer = employerRepository.findById(job.getEmployer_id());
-
-        if(employer.isPresent()){
-            employerName = employer.get().getName();
-        }
-
-        return JobOneResponse.from(job, fieldIds, provinceIds,employerName);
+        String employerName = getEmployerName(job.getEmployer_id());
+        return JobOneResponse.from(job, fieldIds, provinceIds, employerName);
     }
 
     @Override
@@ -169,4 +167,50 @@ public class JobServiceImpl implements JobService {
                     return JobListResponse.from(job, undefineName);
                 }).toList());
     }
+
+    @Override
+    public JobRecommendResponse getRecommendOne(Long id) {
+        Job job = jobRepository.findById(id).orElseThrow(
+                () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
+        );
+        List<JobFieldDto> jobFields = mapperJobFieldDto(job);
+        List<JobProvinceDto> jobProvinces = mapperJobProvinceDto(job);
+
+        String employerName = getEmployerName(job.getEmployer_id());
+
+        List<SeekerDto> seekerDtos = getSeekerDtosBySalary(job.getSalary(), StringParser.StringToIdList(job.getFields()), StringParser.StringToIdList(job.getProvinces()));
+        System.out.println(seekerDtos);
+
+        return JobRecommendResponse.from(job, jobFields, jobProvinces, employerName, seekerDtos);
+    }
+
+    private List<SeekerDto> getSeekerDtosBySalary(Integer salary, List<Integer> checkjobFields, List<Integer> checkjobProvinces) {
+
+        System.out.println(checkjobFields);
+        System.out.println(checkjobProvinces);
+
+        return jobRepository.listRelatedSeekerBySalary(salary).stream()
+                .filter(seekerDto -> {
+                    Long seekerDtoId = seekerDto.getId();
+                    return resumeRepository.findResumesBySeekerId(seekerDtoId)
+                            .stream()
+                            .map(resume -> {
+                                List<Integer> fields = StringParser.StringToIdList(resume.getFields());
+                                List<Integer> provinces = StringParser.StringToIdList(resume.getProvinces());
+
+                                System.out.println(fields);
+                                System.out.println(provinces);
+
+                                // Check if all job fields are present in the resume fields
+                                boolean allFieldsMatch = fields.stream().anyMatch(checkjobFields::contains);
+                                // Check if any job province is present in the resume provinces
+                                boolean anyProvinceMatch = provinces.stream().anyMatch(checkjobProvinces::contains);
+                                return allFieldsMatch && anyProvinceMatch;
+                            })
+                            .anyMatch(matchResult -> matchResult);
+
+                })
+                .collect(Collectors.toList());
+    }
+
 }

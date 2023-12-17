@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.unigap.api.entity.Job;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -17,7 +18,7 @@ public class JobListResponse {
     private String title;
     private Integer quantity;
     private Integer salary;
-    private Date expiredAt;
+    private LocalDate expiredAt;
     private Long employerId;
     private String employerName;
 

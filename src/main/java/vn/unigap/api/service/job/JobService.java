@@ -6,6 +6,7 @@ import vn.unigap.api.dto.in.CreateJobRequest;
 import vn.unigap.api.dto.in.UpdateJobRequest;
 import vn.unigap.api.dto.out.JobListResponse;
 import vn.unigap.api.dto.out.JobOneResponse;
+import vn.unigap.api.dto.out.JobRecommendResponse;
 
 public interface JobService {
     void create(CreateJobRequest entityDTO);
@@ -17,5 +18,7 @@ public interface JobService {
     void delete(Long id);
 
     PageDtoOut<JobListResponse> getALl(PageDtoIn pageDtoIn);
+
+    JobRecommendResponse getRecommendOne(Long id);
 
 }

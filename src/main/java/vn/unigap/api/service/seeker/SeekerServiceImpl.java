@@ -19,6 +19,7 @@ import vn.unigap.api.repository.SeekerRepository;
 import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.CustomException;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class SeekerServiceImpl implements SeekerService {
 
     @Override
     public void create(CreateSeekerRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
         );
         Seeker newSeeker = Seeker.builder()
@@ -49,7 +50,7 @@ public class SeekerServiceImpl implements SeekerService {
 
     @Override
     public void update(Long id, UpdateSeekerRequest request) {
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now();
         Seeker updateSeeker = seekerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
                 );
