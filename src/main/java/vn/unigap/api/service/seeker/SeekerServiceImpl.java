@@ -1,6 +1,9 @@
 package vn.unigap.api.service.seeker;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,6 +36,11 @@ public class SeekerServiceImpl implements SeekerService {
     private JobProvinceRepository jobProvinceRepository;
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "seekersList", allEntries = true)
+            }
+    )
     public void create(CreateSeekerRequest request) {
         LocalDate currentDate = LocalDate.now();
         JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
@@ -49,6 +57,12 @@ public class SeekerServiceImpl implements SeekerService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "seeker", key = "#id"),
+                    @CacheEvict(value = "seekersList", allEntries = true)
+            }
+    )
     public void update(Long id, UpdateSeekerRequest request) {
         LocalDate currentDate = LocalDate.now();
         Seeker updateSeeker = seekerRepository.findById(id)
@@ -67,6 +81,7 @@ public class SeekerServiceImpl implements SeekerService {
     }
 
     @Override
+    @Cacheable(value = "seeker", key = "#id")
     public SeekerOneResponse getOne(Long id) {
         Seeker seeker = seekerRepository.findById(id).orElseThrow(
                 () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
@@ -82,6 +97,12 @@ public class SeekerServiceImpl implements SeekerService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "seeker", key = "#id"),
+                    @CacheEvict(value = "seekersList", allEntries = true)
+            }
+    )
     public void delete(Long id) {
         Seeker seeker = seekerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
@@ -90,6 +111,7 @@ public class SeekerServiceImpl implements SeekerService {
     }
 
     @Override
+    @Cacheable(value = "seekersList", key = "#pageDtoIn.page + '-' + #pageDtoIn.size") //key will like this "2-3"
     public PageDtoOut<SeekerListResponse> getALl(PageDtoIn pageDtoIn) {
         Page<Seeker> seekers = seekerRepository.findAll(
                 PageRequest.of(pageDtoIn.getPage() - 1,

@@ -2,6 +2,9 @@ package vn.unigap.api.service.employer;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -40,6 +43,11 @@ public class EmployerServiceImpl implements EmployerService {
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "employersList", allEntries = true)
+            }
+    )
     public void create(CreateEmployerRequest employerDtoTn) {
         String email = employerDtoTn.getEmail();
         Optional<Employer> checkEmail = employerRepository.findByEmail(email);
@@ -61,6 +69,12 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "employer", key = "#id"),
+                    @CacheEvict(value = "employersList", allEntries = true)
+            }
+    )
     @Override
     public void update(Long id, UpdateEmployerRequest updateEmployerRequest) {
         Employer updateEmployer = employerRepository.findById(id)
@@ -74,6 +88,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @Cacheable(value = "employer", key = "#id")
     public EmployerResponse getOne(Long id) {
         Employer employer = employerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
@@ -82,6 +97,12 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "employer", key = "#id"),
+                    @CacheEvict(value = "employersList", allEntries = true)
+            }
+    )
     public void delete(Long id) {
         Employer employer = employerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
@@ -90,6 +111,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @Cacheable(value = "employersList", key = "#pageDtoIn.page + '-' + #pageDtoIn.size") //key will like this "2-3"
     public PageDtoOut<EmployerResponse> getAll(PageDtoIn pageDtoIn) {
         Page<Employer> employers = this.employerRepository.findAll(
                 PageRequest.of(pageDtoIn.getPage() - 1, pageDtoIn.getSize(),

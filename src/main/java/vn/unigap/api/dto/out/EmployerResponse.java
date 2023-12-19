@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.unigap.api.entity.Employer;
 
+import java.io.Serializable;
+
 //https://howtodoinjava.com/lombok/lombok-builder-annotation/
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EmployerResponse {
+public class EmployerResponse  {
     private long id;
     private String email;
     private String name;
