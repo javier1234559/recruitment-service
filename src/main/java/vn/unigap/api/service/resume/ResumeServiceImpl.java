@@ -26,11 +26,10 @@ import vn.unigap.api.repository.JobProvinceRepository;
 import vn.unigap.api.repository.ResumeRepository;
 import vn.unigap.api.repository.SeekerRepository;
 import vn.unigap.common.EnumStatusCode;
-import vn.unigap.common.exception.CustomException;
+import vn.unigap.common.exception.ApiException;
 import vn.unigap.common.helper.StringParser;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -86,7 +85,7 @@ public class ResumeServiceImpl implements ResumeService {
     )
     public void create(CreateResumeRequest request) {
         LocalDate currentDate = LocalDate.now();
-        Seeker seeker = seekerRepository.findById(request.getSeekerId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + request.getSeekerId() + " is not found!")
+        Seeker seeker = seekerRepository.findById(request.getSeekerId()).orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + request.getSeekerId() + " is not found!")
         );
 
         String fieldIds = StringParser.ListIdToString(request.getFieldIds());
@@ -117,7 +116,7 @@ public class ResumeServiceImpl implements ResumeService {
     public void update(Long id, UpdateResumeRequest request) {
         LocalDate currentDate = LocalDate.now();
         Resume updateResume = resumeRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
                 );
 
         updateResume.setCareer_obj(request.getCareerObj());
@@ -139,7 +138,7 @@ public class ResumeServiceImpl implements ResumeService {
     @Cacheable(value = "resume", key = "#id")
     public ResumeOneResponse getOne(Long id) {
         Resume resume = resumeRepository.findById(id).orElseThrow(
-                () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
+                () -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
         );
 
         List<JobFieldDto> fieldIds = mapperJobFieldDto(resume);
@@ -163,7 +162,7 @@ public class ResumeServiceImpl implements ResumeService {
     )
     public void delete(Long id) {
         Resume resume = resumeRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Resume with id " + id + " is not found!")
                 );
         resumeRepository.deleteById(resume.getId());
     }

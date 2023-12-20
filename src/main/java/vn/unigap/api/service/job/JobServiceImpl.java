@@ -19,12 +19,10 @@ import vn.unigap.api.dto.out.JobRecommendResponse;
 import vn.unigap.api.entity.*;
 import vn.unigap.api.repository.*;
 import vn.unigap.common.EnumStatusCode;
-import vn.unigap.common.exception.CustomException;
+import vn.unigap.common.exception.ApiException;
 import vn.unigap.common.helper.StringParser;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -120,7 +118,7 @@ public class JobServiceImpl implements JobService {
     public void update(Long id, UpdateJobRequest request) {
         LocalDate currentDate = LocalDate.now();
         Job updateJob = jobRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
                 );
 
         updateJob.setTitle(request.getTitle());
@@ -144,7 +142,7 @@ public class JobServiceImpl implements JobService {
     public JobOneResponse getOne(Long id) {
         Job job;
         job = jobRepository.findById(id).orElseThrow(
-                () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
+                () -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
         );
 
         List<JobFieldDto> fieldIds = mapperJobFieldDto(job);
@@ -163,7 +161,7 @@ public class JobServiceImpl implements JobService {
     )
     public void delete(Long id) {
         Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Employer with id " + id + " is not found!")
                 );
         jobRepository.deleteById(job.getId());
     }
@@ -194,7 +192,7 @@ public class JobServiceImpl implements JobService {
     @Cacheable(value = "jobRecommend", key = "#id")
     public JobRecommendResponse getRecommendOne(Long id) {
         Job job = jobRepository.findById(id).orElseThrow(
-                () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
+                () -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Job with id " + id + " is not found!")
         );
         List<JobFieldDto> jobFields = mapperJobFieldDto(job);
         List<JobProvinceDto> jobProvinces = mapperJobProvinceDto(job);

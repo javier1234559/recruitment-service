@@ -20,10 +20,9 @@ import vn.unigap.api.entity.Seeker;
 import vn.unigap.api.repository.JobProvinceRepository;
 import vn.unigap.api.repository.SeekerRepository;
 import vn.unigap.common.EnumStatusCode;
-import vn.unigap.common.exception.CustomException;
+import vn.unigap.common.exception.ApiException;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -43,7 +42,7 @@ public class SeekerServiceImpl implements SeekerService {
     )
     public void create(CreateSeekerRequest request) {
         LocalDate currentDate = LocalDate.now();
-        JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
+        JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
         );
         Seeker newSeeker = Seeker.builder()
                 .name(request.getName())
@@ -66,13 +65,13 @@ public class SeekerServiceImpl implements SeekerService {
     public void update(Long id, UpdateSeekerRequest request) {
         LocalDate currentDate = LocalDate.now();
         Seeker updateSeeker = seekerRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
                 );
 
         updateSeeker.setName(request.getName());
         updateSeeker.setAddress(request.getAddress());
         updateSeeker.setBirthday(request.getBirthday());
-        JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
+        JobProvince jobProvince = jobProvinceRepository.findById(request.getProvinceId()).orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Province with id " + request.getProvinceId() + " is not found!")
         );
         updateSeeker.setProvince(jobProvince.getId());
         updateSeeker.setUpdatedAt(currentDate);
@@ -84,7 +83,7 @@ public class SeekerServiceImpl implements SeekerService {
     @Cacheable(value = "seeker", key = "#id")
     public SeekerOneResponse getOne(Long id) {
         Seeker seeker = seekerRepository.findById(id).orElseThrow(
-                () -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
+                () -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
         );
 
         Optional<JobProvince> jobProvince = jobProvinceRepository.findById(seeker.getProvince());
@@ -105,7 +104,7 @@ public class SeekerServiceImpl implements SeekerService {
     )
     public void delete(Long id) {
         Seeker seeker = seekerRepository.findById(id)
-                .orElseThrow(() -> new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
+                .orElseThrow(() -> new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Seeker with id " + id + " is not found!")
                 );
         seekerRepository.deleteById(seeker.getId());
     }

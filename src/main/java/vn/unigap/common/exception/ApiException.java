@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CustomException extends RuntimeException {
+public class ApiException extends RuntimeException {
     private final Integer errorCode;
     private final HttpStatus httpStatus;
     private final String errorMessage;
 
-    public CustomException(Integer errorCode, HttpStatus httpStatus, String message) {
+    public ApiException(Integer errorCode, HttpStatus httpStatus, String message) {
         super(message);
         this.errorCode = errorCode;
         this.httpStatus = httpStatus;

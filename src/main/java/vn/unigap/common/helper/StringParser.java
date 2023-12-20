@@ -2,7 +2,7 @@ package vn.unigap.common.helper;
 
 import org.springframework.http.HttpStatus;
 import vn.unigap.common.EnumStatusCode;
-import vn.unigap.common.exception.CustomException;
+import vn.unigap.common.exception.ApiException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,13 +17,13 @@ public class StringParser {
                     .map(Integer::parseInt)
                     .collect(Collectors.toList());
         } catch (NumberFormatException e) {
-            throw new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Invalid integer format in the input string");
+            throw new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Invalid integer format in the input string");
         }
     }
 
     static public String ListIdToString(List<Integer> list) {
         if (list == null) {
-            throw new CustomException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Input list cannot be null");
+            throw new ApiException(EnumStatusCode.NOT_FOUND, HttpStatus.NOT_FOUND, "Input list cannot be null");
         }
 
         return list.stream()

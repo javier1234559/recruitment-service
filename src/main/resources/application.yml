@@ -21,6 +21,17 @@ spring:
       hibernate:
         auto_quote_keyword: true
     show-sql: true
+---
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+
+
+---
+rsa:
+  private-key: classpath:certs/private-key.pem
+  public-key: classpath:certs/public-key.pem
 
 ---
 spring:
