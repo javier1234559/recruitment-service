@@ -30,8 +30,8 @@ logging:
 
 ---
 rsa:
-  private-key: classpath:certs/private-key.pem
-  public-key: classpath:certs/public-key.pem
+  private-key: classpath:private-key.pem
+  public-key: classpath:public-key.pem
 
 ---
 spring:
