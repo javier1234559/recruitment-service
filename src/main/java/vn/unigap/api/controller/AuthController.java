@@ -1,5 +1,7 @@
 package vn.unigap.api.controller;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +24,17 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthLoginRequest loginDtoIn) {
+    public ResponseEntity<?> login(@RequestBody @Valid AuthLoginRequest loginDtoIn , HttpServletResponse response) {
         AuthLoginResponse result = authService.login(loginDtoIn);
         String successMsg = "Login successfully !!";
+
+
+        Cookie jwtCookie = new Cookie("JWT", result.getAccessToken());
+        // Set the cookie's properties
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(true);
+        // Add the cookie to the response
+        response.addCookie(jwtCookie);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
