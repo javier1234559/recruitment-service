@@ -2,6 +2,7 @@ package vn.unigap.api.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import vn.unigap.api.dto.StatisticElementDto;
 import vn.unigap.api.dto.out.StatisticResponse;
@@ -55,32 +56,39 @@ public class StatisticRepository {
     }
 
     public List<StatisticElementDto> getListElement(LocalDate fromDate, LocalDate toDate) {
+//
+//        String JPQL = "SELECT NEW vn.unigap.api.dto.StatisticElementDto(" +
+//                "DATE(e.createdAt), " + //This line have to convert to Local Time
+//                "COUNT(e.id) , " +
+//                "COUNT(j.id) , " +
+//                "COUNT(s.id), " +
+//                "COUNT(r.id))" +
+//                "FROM Employer e " +
+//                "LEFT JOIN Job j ON DATE(j.createdAt) = DATE(e.createdAt) " +
+//                "LEFT JOIN Seeker s ON DATE(s.createdAt) = DATE(e.createdAt) " +
+//                "LEFT JOIN Resume r ON DATE(r.createdAt) = DATE(e.createdAt) " +
+//                "WHERE e.createdAt BETWEEN :startDate AND :endDate " +
+//                "GROUP BY DATE(e.createdAt)";
+//
+//        TypedQuery<StatisticElementDto> query = entityManager.createQuery(JPQL, StatisticElementDto.class);
+//        query.setParameter("startDate", fromDate);
+//        query.setParameter("endDate", toDate);
+//
+//        return query.getResultList();
 
         List<StatisticElementDto> resultList = new ArrayList<>();
         for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
+            TypedQuery<StatisticElementDto> query = entityManager.createQuery(
+                    "SELECT new vn.unigap.api.dto.StatisticElementDto(:date, COUNT(e.id), COUNT(j.id), COUNT(s.id), COUNT(r.id)) " +
+                            "FROM Employer e, Job j, Seeker s, Resume r " +
+                            "WHERE e.createdAt = :date AND j.createdAt = :date AND s.createdAt = :date AND r.createdAt = :date " +
+                            "GROUP BY e.createdAt, j.createdAt, s.createdAt, r.createdAt",
+                    StatisticElementDto.class
+            );
 
-            Long numEmployer = (Long) entityManager.createQuery(
-                            "SELECT COUNT(s.id) FROM Employer s WHERE s.createdAt = :date")
-                    .setParameter("date", date).getSingleResult();
+            StatisticElementDto result = query.setParameter("date", date).getSingleResult();
+            resultList.add(result);
 
-            Long numJob = (Long) entityManager.createQuery(
-                            "SELECT COUNT(s.id) FROM Job s WHERE s.createdAt = :date")
-                    .setParameter("date", date).getSingleResult();
-
-            Long numSeeker = (Long) entityManager.createQuery(
-                            "SELECT COUNT(s.id) FROM Seeker s WHERE s.createdAt = :date")
-                    .setParameter("date", date).getSingleResult();
-
-            Long numResume = (Long) entityManager.createQuery(
-                            "SELECT COUNT(s.id) FROM Resume s WHERE s.createdAt = :date")
-                    .setParameter("date", date).getSingleResult();
-
-            resultList.add(StatisticElementDto.builder()
-                    .date(date)
-                    .numEmployer(numEmployer)
-                    .numJob(numJob)
-                    .numSeeker(numSeeker)
-                    .numResume(numResume).build());
         }
 
         return resultList;
