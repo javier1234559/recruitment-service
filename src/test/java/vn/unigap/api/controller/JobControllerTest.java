@@ -31,7 +31,6 @@ import vn.unigap.common.helper.StringParser;
 import java.time.LocalDate;
 import java.util.Arrays;
 
-//@WebMvcTest(JobController.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional

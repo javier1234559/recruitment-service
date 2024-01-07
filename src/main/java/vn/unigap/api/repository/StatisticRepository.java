@@ -78,17 +78,29 @@ public class StatisticRepository {
 
         List<StatisticElementDto> resultList = new ArrayList<>();
         for (LocalDate date = fromDate; date.isBefore(toDate); date = date.plusDays(1)) {
-            TypedQuery<StatisticElementDto> query = entityManager.createQuery(
-                    "SELECT new vn.unigap.api.dto.StatisticElementDto(:date, COUNT(e.id), COUNT(j.id), COUNT(s.id), COUNT(r.id)) " +
-                            "FROM Employer e, Job j, Seeker s, Resume r " +
-                            "WHERE e.createdAt = :date AND j.createdAt = :date AND s.createdAt = :date AND r.createdAt = :date " +
-                            "GROUP BY e.createdAt, j.createdAt, s.createdAt, r.createdAt",
-                    StatisticElementDto.class
-            );
 
-            StatisticElementDto result = query.setParameter("date", date).getSingleResult();
-            resultList.add(result);
+            Long numEmployer = (Long) entityManager.createQuery(
+                            "SELECT COUNT(s.id) FROM Employer s WHERE s.createdAt = :date")
+                    .setParameter("date", date).getSingleResult();
 
+            Long numJob = (Long) entityManager.createQuery(
+                            "SELECT COUNT(s.id) FROM Job s WHERE s.createdAt = :date")
+                    .setParameter("date", date).getSingleResult();
+
+            Long numSeeker = (Long) entityManager.createQuery(
+                            "SELECT COUNT(s.id) FROM Seeker s WHERE s.createdAt = :date")
+                    .setParameter("date", date).getSingleResult();
+
+            Long numResume = (Long) entityManager.createQuery(
+                            "SELECT COUNT(s.id) FROM Resume s WHERE s.createdAt = :date")
+                    .setParameter("date", date).getSingleResult();
+
+            resultList.add(StatisticElementDto.builder()
+                    .date(date)
+                    .numEmployer(numEmployer)
+                    .numJob(numJob)
+                    .numSeeker(numSeeker)
+                    .numResume(numResume).build());
         }
 
         return resultList;

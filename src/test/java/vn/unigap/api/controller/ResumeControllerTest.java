@@ -6,11 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,30 +17,17 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import vn.unigap.api.dto.PageDtoIn;
-import vn.unigap.api.dto.PageDtoOut;
-import vn.unigap.api.dto.in.AuthLoginRequest;
-import vn.unigap.api.dto.in.CreateEmployerRequest;
-import vn.unigap.api.dto.in.UpdateEmployerRequest;
-import vn.unigap.api.dto.in.UpdateJobRequest;
+import vn.unigap.api.dto.in.*;
 import vn.unigap.api.dto.out.AuthLoginResponse;
-import vn.unigap.api.dto.out.EmployerResponse;
-import vn.unigap.api.service.employer.EmployerService;
 import vn.unigap.common.CustomResponse;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class EmployerControllerTest {
-
+public class ResumeControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -86,7 +71,7 @@ public class EmployerControllerTest {
 
         // Act
         RequestBuilder request = MockMvcRequestBuilders
-                .get("/api/v1/employers")
+                .get("/api/v1/resumes")
                 .param("page", String.valueOf(page))
                 .param("size", String.valueOf(size))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -108,14 +93,41 @@ public class EmployerControllerTest {
     }
 
     @Test
+    public void testCreate() throws Exception {
+        // Arrange-Act-Assert pattern
+        // Arrange
+        CreateResumeRequest testObject = new CreateResumeRequest(
+                4451948L,
+                "Career Objective",
+                "Title",
+                60000,
+                Arrays.asList(1, 2, 3),
+                Arrays.asList(1,2,3)
+        );
+
+        // Act
+        RequestBuilder request = MockMvcRequestBuilders
+                .post("/api/v1/resumes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testObject))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON);
+        ResultActions response = mockMvc.perform(request);
+
+        // Assert
+        response.andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
     public void getOne() throws Exception {
         // Arrange-Act-Assert pattern
         // Arrange
-        Long id = 3093562L;
+        Long id = 8514185L;
 
         // Act
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .get("/api/v1/employers/{id}", id)
+                .get("/api/v1/resumes/{id}", id)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON);
         ResultActions response = mockMvc.perform(requestBuilder);
@@ -131,32 +143,21 @@ public class EmployerControllerTest {
     }
 
     @Test
-    public void testCreate() throws Exception {
-        CreateEmployerRequest testObject = new CreateEmployerRequest("test@gmail.com", "TEst", 1, "Description 1");
-
-        // Act
-        RequestBuilder request = MockMvcRequestBuilders
-                .post("/api/v1/employers")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testObject))
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON);
-        ResultActions response = mockMvc.perform(request);
-
-        // Assert
-        response.andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-    }
-
-    @Test
     public void testUpdate() throws Exception {
         // Arrange-Act-Assert pattern
         // Arrange
-        Long id = 1L;
-        UpdateEmployerRequest testObject = new UpdateEmployerRequest("Name", 123, "Description");
+        Long id = 8514185L;
+        UpdateResumeRequest testObject = new UpdateResumeRequest(
+                id,
+                "Updated Career Objective",
+                "Updated Title",
+                60000,
+                Arrays.asList(4, 5, 6),
+                Arrays.asList(1,2,3)
+        );
         // Act
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-                .put("/api/v1/employers/{id}", id)
+                .put("/api/v1/resumes/{id}", id)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testObject));
@@ -168,14 +169,14 @@ public class EmployerControllerTest {
     @Test
     public void testDelete() throws Exception {
         // Arrange-Act-Assert pattern
-        Long id = 1L;
+        Long id = 8514185L;
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/api/v1/employers/{id}", id)
+                        .delete("/api/v1/resumes/{id}", id)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
-    }
 
+    }
 
 }
