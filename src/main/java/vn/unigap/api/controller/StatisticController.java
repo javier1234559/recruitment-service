@@ -53,6 +53,6 @@ public class StatisticController {
         StatisticResponse response = statisticService.getStatisticByDate(request);
         String successMsg = "";
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CustomResponse.withDataResponse(response, EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
+        return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(response, EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
     }
 }

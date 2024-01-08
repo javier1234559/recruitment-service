@@ -1,9 +1,9 @@
 package vn.unigap.common.exception;
 
+import io.sentry.Sentry;
+import io.sentry.SentryEvent;
+import io.sentry.SentryLevel;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +12,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import vn.unigap.common.CustomResponse;
 import vn.unigap.common.EnumStatusCode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 //https://howtodoinjava.com/spring-boot/logging-with-lombok/
 
@@ -68,11 +64,15 @@ public class ApiExceptionHandler {
     }
 
     private void captureException(Exception e, HttpStatusCode status) {
+        SentryEvent event = new SentryEvent(e);
         if (status.is5xxServerError()) {
+            event.setLevel(SentryLevel.ERROR);
             log.error("Internal exception occurred:", e);
         } else if (status.is4xxClientError()) {
-            log.debug("Debug exception occurred:", e);
+            event.setLevel(SentryLevel.INFO);
+            log.info("Debug exception occurred:", e);
         }
+        Sentry.captureEvent(event);
     }
 
 }

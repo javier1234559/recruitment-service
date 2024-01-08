@@ -5,7 +5,9 @@ spring:
     error:
       include-message: always
       include-binding-errors: always
-
+server:
+  port:
+    8080
 ---
 spring:
   datasource:
@@ -22,12 +24,19 @@ spring:
         auto_quote_keyword: true
     show-sql: true
 ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
 logging:
   level:
     root: INFO
     org.springframework.security: DEBUG
 
-
+sentry:
+  dsn: https://f4047898ee3eefb82c95be52608d9479@o4506523734900736.ingest.sentry.io/4506535452475392
+  in-app-includes: vn.unigap
 ---
 rsa:
   private-key: classpath:private-key.pem
@@ -44,3 +53,5 @@ spring:
       host: localhost
       port: 6379
       password: Redis@123
+
+
