@@ -5,7 +5,9 @@ spring:
     error:
       include-message: always
       include-binding-errors: always
-
+server:
+  port:
+    8080
 ---
 spring:
   datasource:
@@ -33,7 +35,8 @@ logging:
     org.springframework.security: DEBUG
 
 sentry:
-  dsn: https://4dfee89a1384bb26bfe2ac25df9e1a9f@o4506523734900736.ingest.sentry.io/4506523754758144
+  dsn: https://f4047898ee3eefb82c95be52608d9479@o4506523734900736.ingest.sentry.io/4506535452475392
+  in-app-includes: vn.unigap
 ---
 rsa:
   private-key: classpath:private-key.pem
@@ -51,12 +54,4 @@ spring:
       port: 6379
       password: Redis@123
 
----
-spring:
-  data:
-    mongodb:
-      host: "localhost"
-      port: 27017
-      username: "user" # use have to create this user
-      password: "User123"
-      database: "sample_db"
+

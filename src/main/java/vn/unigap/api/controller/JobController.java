@@ -1,6 +1,7 @@
 package vn.unigap.api.controller;
 
 
+import io.sentry.Sentry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -171,6 +172,17 @@ public class JobController {
     public ResponseEntity<CustomResponse<PageDtoOut<JobListResponse>>> getAll(@Valid PageDtoIn pageDtoIn) {
         String successMsg = "";
         return ResponseEntity.status(HttpStatus.OK).body(CustomResponse.withDataResponse(jobService.getALl(pageDtoIn), EnumStatusCode.SUCCESS, HttpStatus.OK, successMsg));
+    }
+
+    @GetMapping("/error")
+    public ResponseEntity<?> handledException(){
+
+        try {
+            throw new Exception("This is a test.");
+        } catch (Exception e) {
+            Sentry.captureException(e);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("TEST");
     }
 
 }
