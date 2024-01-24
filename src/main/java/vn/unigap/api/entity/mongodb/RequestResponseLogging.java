@@ -16,7 +16,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(value = "request_response")
+//@Document(value = "request_response")
 public class RequestResponseLogging {
 
     @MongoId(value = FieldType.OBJECT_ID)

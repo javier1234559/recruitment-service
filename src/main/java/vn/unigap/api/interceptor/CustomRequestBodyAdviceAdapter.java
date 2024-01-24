@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 
 
 //This class to handle POST,PUT,DELETE request (which mean have body)
-@ControllerAdvice
+@ControllerAdvice(basePackages = {"vn.unigap.api.controller"})
 public class CustomRequestBodyAdviceAdapter extends RequestBodyAdviceAdapter {
 
     @Autowired

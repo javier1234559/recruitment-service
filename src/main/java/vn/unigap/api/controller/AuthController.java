@@ -28,47 +28,48 @@ import vn.unigap.common.CustomResponse;
 public class AuthController {
 
 
-    @Autowired
-    private AuthService authService;
+  @Autowired
+  private AuthService authService;
 
 
-    private static class ResponseAuth extends CustomResponse<AuthLoginResponse> {
-    }
+  private static class ResponseAuth extends CustomResponse<AuthLoginResponse> {
+  }
 
 
-    @Operation(
-            summary = "Đăng nhập",
-            responses = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            content = {@Content(
-                                    mediaType = "application/json",
-                                    schema = @Schema(
-                                            implementation = ResponseAuth.class
-                                    )
-                            )}
-                    )
-            }
-    )
-    @PostMapping(value = "/login")
-    public ResponseEntity<?> login(@RequestBody @Valid AuthLoginRequest loginDtoIn, HttpServletResponse response) {
-        AuthLoginResponse result = authService.login(loginDtoIn);
-        String successMsg = "Login successfully !!";
+  @Operation(
+      summary = "Đăng nhập",
+      responses = {
+          @ApiResponse(
+              responseCode = "200",
+              content = {@Content(
+                  mediaType = "application/json",
+                  schema = @Schema(
+                      implementation = ResponseAuth.class
+                  )
+              )}
+          )
+      }
+  )
+  @PostMapping(value = "/login")
+  public ResponseEntity<?> login(@RequestBody @Valid AuthLoginRequest loginDtoIn,
+                                 HttpServletResponse response) {
+    AuthLoginResponse result = authService.login(loginDtoIn);
+    String successMsg = "Login successfully !!";
 
 
-        Cookie jwtCookie = new Cookie("JWT", result.getAccessToken());
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(true);
-        response.addCookie(jwtCookie);
+    Cookie jwtCookie = new Cookie("JWT", result.getAccessToken());
+    jwtCookie.setHttpOnly(true);
+    jwtCookie.setSecure(true);
+    response.addCookie(jwtCookie);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(
-                        CustomResponse.withDataResponse(result
-                                , 0,
-                                HttpStatus.OK,
-                                successMsg
-                        ));
-    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(
+            CustomResponse.withDataResponse(result
+                , 0,
+                HttpStatus.OK,
+                successMsg
+            ));
+  }
 
 
 }

@@ -7,7 +7,7 @@ WORKDIR /tmp/
 
 COPY .mvn /tmp/.mvn/
 COPY mvnw /tmp/
-#COPY checkstyle.xml /tmp/
+COPY checkstyle.xml /tmp/
 COPY pom.xml /tmp/
 COPY src /tmp/src/
 # Copy Maven configuration files, Maven wrapper script, POM file, and source code into the container's /tmp/ directory.

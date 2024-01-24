@@ -3,8 +3,8 @@ version: '3.3'
 services:
   grafana:
     image: grafana/grafana:10.0.3-ubuntu
-#    ports:
-#      - '3000:3000'
+    ports:
+      - '3000:3000'
     volumes:
       - grafana:/var/lib/grafana
     restart: on-failure
@@ -12,7 +12,6 @@ services:
       - "host.docker.internal:host-gateway"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-    network_mode: "host"
 
 volumes:
   grafana:

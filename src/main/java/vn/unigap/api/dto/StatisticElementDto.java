@@ -15,8 +15,12 @@ import java.util.Date;
 @Builder
 public class StatisticElementDto {
     private LocalDate date;
+    @Builder.Default
     private Long numEmployer = 0L;
+    @Builder.Default
     private Long numJob = 0L;
+    @Builder.Default
     private Long numSeeker = 0L;
+    @Builder.Default
     private Long numResume = 0L;
 }

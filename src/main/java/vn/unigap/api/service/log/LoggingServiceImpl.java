@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.unigap.api.entity.mongodb.RequestResponseLogging;
-import vn.unigap.api.repository.mongodb.RequestResponseLoggingRepository;
 import vn.unigap.common.Common;
 import vn.unigap.common.Constants;
 
@@ -24,8 +23,8 @@ public class LoggingServiceImpl implements LoggingService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private RequestResponseLoggingRepository requestResponseLoggingRepository;
+//    @Autowired
+//    private RequestResponseLoggingRepository requestResponseLoggingRepository;
 
     @Override
     public void logRequest(HttpServletRequest httpServletRequest, Object body) {
@@ -86,7 +85,7 @@ public class LoggingServiceImpl implements LoggingService {
         // run async for inserting into mongodb
         CompletableFuture.runAsync(() -> {
             try {
-                requestResponseLoggingRepository.save(reqres);
+//                requestResponseLoggingRepository.save(reqres);
             } catch (Exception e) {
                 log.error("ERROR: could not save reqres into mongodb: ", e);
             }

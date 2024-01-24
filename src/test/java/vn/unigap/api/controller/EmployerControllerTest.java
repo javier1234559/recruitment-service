@@ -152,7 +152,7 @@ public class EmployerControllerTest {
     public void testUpdate() throws Exception {
         // Arrange-Act-Assert pattern
         // Arrange
-        Long id = 1L;
+        Long id = 3093562L;
         UpdateEmployerRequest testObject = new UpdateEmployerRequest("Name", 123, "Description");
         // Act
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -168,7 +168,7 @@ public class EmployerControllerTest {
     @Test
     public void testDelete() throws Exception {
         // Arrange-Act-Assert pattern
-        Long id = 1L;
+        Long id = 3093562L;
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/api/v1/employers/{id}", id)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)

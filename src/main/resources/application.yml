@@ -1,17 +1,8 @@
 spring:
   application:
-    name: sample-projectserver
-  server:
-    error:
-      include-message: always
-      include-binding-errors: always
-server:
-  port:
-    8080
----
-spring:
+    name: recruitment-service
   datasource:
-    url: jdbc:mysql://localhost:3306/job_db
+    url: jdbc:mysql://35.220.196.250/job_db
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: Admin@123
@@ -23,12 +14,31 @@ spring:
       hibernate:
         auto_quote_keyword: true
     show-sql: true
----
+  cache:
+    type: redis
+    redis:
+      time-to-live: PT2M
+  data:
+    redis:
+      host: 35.220.196.250
+      port: 6379
+      password: Redis@123
+#    mongodb:
+#      host: "localhost"
+#      port: 27017
+#      username: "user" # use have to create this user
+#      password: "User123"
+#      database: "sample_db"
+
+server:
+  port: 8080
+
 management:
   endpoints:
     web:
       exposure:
         include: '*'
+
 logging:
   level:
     root: INFO
@@ -37,25 +47,7 @@ logging:
 sentry:
   dsn: https://f4047898ee3eefb82c95be52608d9479@o4506523734900736.ingest.sentry.io/4506535452475392
   in-app-includes: vn.unigap
----
+
 rsa:
   private-key: classpath:private-key.pem
   public-key: classpath:public-key.pem
-
----
-spring:
-  cache:
-    type: redis
-    redis:
-      time-to-live: PT2M
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      password: Redis@123
-    mongodb:
-      host: "localhost"
-      port: 27017
-      username: "user" # use have to create this user
-      password: "User123"
-      database: "sample_db"

@@ -151,7 +151,7 @@ public class JobControllerTest {
     public void testUpdate() throws Exception {
         // Arrange-Act-Assert pattern
         // Arrange
-        Long id = 1L;
+        Long id = 4488937L;
         UpdateJobRequest testObject = new UpdateJobRequest(
                 id,
                 "Updated Job Title",
@@ -176,7 +176,7 @@ public class JobControllerTest {
     @Test
     public void testDelete() throws Exception {
         // Arrange-Act-Assert pattern
-        Long id = 1L;
+        Long id = 4488937L;
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/api/v1/jobs/{id}", id)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
