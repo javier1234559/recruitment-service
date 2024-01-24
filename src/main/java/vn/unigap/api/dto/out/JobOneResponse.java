@@ -6,12 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.unigap.api.dto.JobFieldDto;
 import vn.unigap.api.dto.JobProvinceDto;
-import vn.unigap.api.entity.Employer;
-import vn.unigap.api.entity.Job;
-import vn.unigap.common.helper.StringParser;
+import vn.unigap.api.entity.jpa.Job;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Data

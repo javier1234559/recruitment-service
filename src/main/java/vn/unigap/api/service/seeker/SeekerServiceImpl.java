@@ -15,10 +15,10 @@ import vn.unigap.api.dto.in.CreateSeekerRequest;
 import vn.unigap.api.dto.in.UpdateSeekerRequest;
 import vn.unigap.api.dto.out.SeekerListResponse;
 import vn.unigap.api.dto.out.SeekerOneResponse;
-import vn.unigap.api.entity.JobProvince;
-import vn.unigap.api.entity.Seeker;
-import vn.unigap.api.repository.JobProvinceRepository;
-import vn.unigap.api.repository.SeekerRepository;
+import vn.unigap.api.entity.jpa.JobProvince;
+import vn.unigap.api.entity.jpa.Seeker;
+import vn.unigap.api.repository.jpa.JobProvinceRepository;
+import vn.unigap.api.repository.jpa.SeekerRepository;
 import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.ApiException;
 

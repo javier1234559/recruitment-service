@@ -1,4 +1,4 @@
-package vn.unigap.api.repository;
+package vn.unigap.api.repository.jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

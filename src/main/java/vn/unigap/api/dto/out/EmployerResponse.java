@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.unigap.api.entity.Employer;
-
-import java.io.Serializable;
+import vn.unigap.api.entity.jpa.Employer;
 
 //https://howtodoinjava.com/lombok/lombok-builder-annotation/
 

@@ -4,13 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.unigap.api.dto.JobFieldDto;
-import vn.unigap.api.dto.JobProvinceDto;
-import vn.unigap.api.entity.Job;
-import vn.unigap.api.entity.Seeker;
-
-import java.util.Date;
-import java.util.List;
+import vn.unigap.api.entity.jpa.Seeker;
 
 @Data
 @AllArgsConstructor

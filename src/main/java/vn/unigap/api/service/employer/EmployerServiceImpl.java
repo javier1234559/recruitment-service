@@ -15,10 +15,10 @@ import vn.unigap.api.dto.PageDtoOut;
 import vn.unigap.api.dto.in.CreateEmployerRequest;
 import vn.unigap.api.dto.in.UpdateEmployerRequest;
 import vn.unigap.api.dto.out.EmployerResponse;
-import vn.unigap.api.entity.Employer;
-import vn.unigap.api.entity.JobProvince;
-import vn.unigap.api.repository.EmployerRepository;
-import vn.unigap.api.repository.JobProvinceRepository;
+import vn.unigap.api.entity.jpa.Employer;
+import vn.unigap.api.entity.jpa.JobProvince;
+import vn.unigap.api.repository.jpa.EmployerRepository;
+import vn.unigap.api.repository.jpa.JobProvinceRepository;
 import vn.unigap.common.EnumStatusCode;
 import vn.unigap.common.exception.ApiException;
 

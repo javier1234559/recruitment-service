@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import vn.unigap.api.entity.Resume;
+import vn.unigap.api.entity.jpa.Resume;
 
 @Data
 @AllArgsConstructor

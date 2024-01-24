@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.unigap.api.dto.StatisticElementDto;
-import vn.unigap.api.entity.Seeker;
 
 import java.util.ArrayList;
 import java.util.List;

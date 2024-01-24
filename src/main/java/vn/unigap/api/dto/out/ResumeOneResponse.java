@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import vn.unigap.api.dto.JobFieldDto;
 import vn.unigap.api.dto.JobProvinceDto;
-import vn.unigap.api.entity.Resume;
+import vn.unigap.api.entity.jpa.Resume;
 
 import java.util.List;
 

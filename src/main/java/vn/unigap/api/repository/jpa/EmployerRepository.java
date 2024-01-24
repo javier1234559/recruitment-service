@@ -1,10 +1,10 @@
-package vn.unigap.api.repository;
+package vn.unigap.api.repository.jpa;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import vn.unigap.api.entity.Employer;
+import vn.unigap.api.entity.jpa.Employer;
 
 import java.util.Optional;
 
