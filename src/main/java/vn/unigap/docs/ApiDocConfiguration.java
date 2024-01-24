@@ -22,6 +22,10 @@ import org.springframework.context.annotation.Configuration;
                 @Server(
                         url = "http://localhost:8080",
                         description = "Localhost"
+                ),
+                @Server(
+                        url = "https://recruitment-service-7ajmxitafq-df.a.run.app",
+                        description = "Recruitment Service"
                 )
         }
 )

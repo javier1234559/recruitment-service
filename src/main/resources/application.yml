@@ -2,7 +2,7 @@ spring:
   application:
     name: recruitment-service
   datasource:
-    url: jdbc:mysql://35.220.196.250/job_db
+    url: jdbc:mysql://localhost:3306/job_db
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: Admin@123
@@ -20,7 +20,7 @@ spring:
       time-to-live: PT2M
   data:
     redis:
-      host: 35.220.196.250
+      host: localhost
       port: 6379
       password: Redis@123
 #    mongodb:

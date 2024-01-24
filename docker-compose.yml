@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
   api:
+    build: .
     image: recruitment-service:latest
     environment:
       SPRING_DATASOURCE_URL: 'jdbc:mysql://host.docker.internal:3306/job_db'
